@@ -1,7 +1,6 @@
 package myprojects.automation.assignment4;
 
 import myprojects.automation.assignment4.utils.logging.EventHandler;
-import org.jetbrains.annotations.Nullable;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -49,6 +48,10 @@ public abstract class BaseTest {
         }
     }
 
+    /**
+     * @param resourceName The name of the resource
+     * @return Path to resource
+     */
     private String getResource(String resourceName) {
         try {
            return Paths.get(BaseTest.class.getResource(resourceName).toURI()).toFile().getPath();
