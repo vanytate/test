@@ -1,6 +1,7 @@
 package myprojects.automation.assignment4;
 
 import myprojects.automation.assignment4.utils.logging.EventHandler;
+import org.jetbrains.annotations.Nullable;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -9,7 +10,8 @@ import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
-import java.io.File;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -30,21 +32,30 @@ public abstract class BaseTest {
             case "firefox":
                 System.setProperty(
                         "webdriver.gecko.driver",
-                        new File(BaseTest.class.getResource("/geckodriver.exe").getFile()).getPath());
+                        getResource("/geckodriver.exe"));
                 return new FirefoxDriver();
             case "ie":
             case "internet explorer":
                 System.setProperty(
                         "webdriver.ie.driver",
-                        new File(BaseTest.class.getResource("/IEDriverServer.exe").getFile()).getPath());
+                        getResource("/IEDriverServer.exe"));
                 return new InternetExplorerDriver();
             case "chrome":
             default:
                 System.setProperty(
                         "webdriver.chrome.driver",
-                        new File(BaseTest.class.getResource("/chromedriver.exe").getFile()).getPath());
+                        getResource("/chromedriver.exe"));
                 return new ChromeDriver();
         }
+    }
+
+    private String getResource(String resourceName) {
+        try {
+           return Paths.get(BaseTest.class.getResource(resourceName).toURI()).toFile().getPath();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        return resourceName;
     }
 
     /**
