@@ -11,6 +11,7 @@ public class CreateProductTest extends BaseTest {
 
         // actions.login(login, password);
         // ...
+
     }
 
     // TODO implement logic to check product visibility on website
