@@ -10,31 +10,57 @@ import org.openqa.selenium.interactions.Actions;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+
 public class ProductPage {
 
-    private By catalogItem = By.id("subtab-AdminCatalog");
+    private WebDriver webDriver;
+    private By catalogItem = By.xpath("/html/body/nav/ul/li[4]/a/span");
     private By productItem = By.xpath("/html/body/nav/ul/li[4]/ul/li[1]/a");
+    private By headerProducts = By.xpath("//*[@id=\"main-div\"]/div[1]/h2");
     private By newProductBtn = By.id ("page-header-desc-configuration-add");
     private By saveBtn = By.class ("btn btn-primary js-btn-save");
-    public CategoryPage(WebDriver driver) {
-        this.driver = driver;
+
+    public void open() {
+
+        webDriver.get(Properties.getBaseAdminUrl());
     }
-@Test
-    public void clickProductSubmenu () {
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+
+    public  ProductPage (WebDriver driver) {
+
+        this.webDriver = driver;
+    }
+
+    @Test
+    public void prodPageIsDisplayed () {
+        WebDriverWait wait = new WebDriverWait(webDriver, 10);
         wait.until(ExpectedConditions.visibilityOfElementLocated(catalogItem));
-        WebElement catalogElement = driver.findElement(catalogItem);
-        Actions actions = new Actions(driver);
+        WebElement catalogElement = webDriver.findElement(catalogItem);
+        Actions actions = new Actions(webDriver);
         actions.moveToElement(catalogElement).build().perform();
         wait.until(ExpectedConditions.visibilityOfElementLocated(productItem));
-        driver.findElement(productItem).click();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(newProductBtn));
-        driver.findElement(newProductBtn).click();
-    Assert.assertEquals(driver.findElement(saveBtn).isDisplayed, "Buuton is not displayed");
-
-    }
+        webDriver.findElement(productItem).click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(headerProducts));
+        Assert.assertTrue(headerProducts).isDisplayed, "Products header is not displaed");
 
 
     }
+    @Test
+    public void newProdPageIsDisplayed () {
+    WebDriverWait wait = new WebDriverWait(webDriver, 10);
+    wait.until(ExpectedConditions.visibilityOfElementLocated(newProductBtn));
+    webDriver.findElement(newProductBtn).click();
+    wait.until(ExpectedConditions.visibilityOfElementLocated(saveBtn));
+    Assert.assertTrue(saveBtn).isDisplayed, "Buuton is not displayed");
+
+   //wait when page is loaded
+
+}
+
+
+@Test
+public void newProdCreating {
+
+    }
+
 
 }
