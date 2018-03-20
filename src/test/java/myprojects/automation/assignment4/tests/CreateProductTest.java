@@ -1,42 +1,54 @@
 package myprojects.automation.assignment4.tests;
 
 import myprojects.automation.assignment4.BaseTest;
-import myprojects.automation.assignment4.GeneralActions;
+import myprojects.automation.assignment4.model.ProductData;
+import myprojects.automation.assignment4.pages.MainClientPage;
+import myprojects.automation.assignment4.pages.ProductPage;
+import org.testng.Assert;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
-
 
 public class CreateProductTest extends BaseTest {
 
-   @Test
+    private ProductData productData;
 
-    // TODO implement test for product creation
-    @Test  (dependsOnMethods ="generalActions.login(login, password)");
-
-    public void createNewProduct(String login, String password) { // it was by default
-
-
-
-        // actions.login(login, password); // it was by default
-        // ...
-
+    @DataProvider
+    public Object[][] getLoginData() {
+        return new String[][]{
+                {"webinar.test@gmail.com", "Xcg7299bnSmMuRLp9ITw"}
+        };
     }
 
-    // TODO implement logic to check product visibility on website
-    @Test
+    @Test(dataProvider = "getLoginData")
+    public void createNewProduct(String login, String password) {
+        actions.login(login, password);
+        productData = ProductData.generate();
+        ProductPage productPage = new ProductPage(driver);
+        productPage.open();
+        productPage.clickProductSubmenu();
+        Assert.assertTrue(productPage.isDisplayedHeaderProducts(), "Products header is not displayed");
+        productPage.openNewProductPageByClick();
+        productPage.fillNameOfProduct(productData.getName());
+        productPage.fillNumberOfProduct(productData.getQty());
+        productPage.fillPriceOfProduct(productData.getPrice());
+        productPage.toggleSwitcher();
+        Assert.assertTrue(productPage.isSuccsessAlertDisplayed(), "Failed toggle.");
+        productPage.closeAlert();
+        productPage.saveButton();
+        Assert.assertTrue(productPage.isSuccsessAlertDisplayed(), "Failed to save");
+        productPage.closeAlert();
+    }
 
+    @Test(dependsOnMethods = "createNewProduct")
+    public void checkCreatedProduct() {
+        MainClientPage mainClientPage = new MainClientPage(driver);
+        mainClientPage.open();
+        mainClientPage.clickByLinkAllProd();
+        mainClientPage.search(productData);
+        Assert.assertTrue(mainClientPage.isPresentProduct(productData), "Product is not present on page");
+        mainClientPage.clickOnProduct(productData);
+        Assert.assertEquals(productData.getName(), mainClientPage.getProductName(), "Product name are differents");
+        Assert.assertTrue(mainClientPage.containProductQty(productData.getQty()), "Product number are differents");
+        Assert.assertTrue(mainClientPage.containsProductPrice(productData.getPrice()), "Product price are differents");
+    }
 }
-
-// тут я пробувала спочатку generalActions.login, заплуталась остаточно, у всіх прикладах такі тести у відео були із асертами
-
-//Рекомендації із завдання
-1. Логику сценария можно разбить на пару методов @Test
-и настроить цепочку выполнения используя атрибут dependsOnMethods для данной аннотации.
-        2. Тестовый скрипт должен содержать проверки (assertions) и дополнительный лог действий,
-        который можно увидеть в отчете о прогоне тестов. Для удобства логирование некоторых действий можно вынести в свою реализацию
-        слушателя WebDriverEventListener, речь о котором шла на прошлой лекции.
-        3. @DataProvider предназначен для передачи тестовых данных в скрипты.
-        Используйте данную аннотацию для передачи логина и пароля в процессе авторизации.
-        4. @Parameters позволяет передавать параметры из testng.xml.
-        Используйте данную аннотацию для определения того, какой тип драйвера необходимо поднять для теста
-        (Chrome, Firefox или же Internet Explorer.)

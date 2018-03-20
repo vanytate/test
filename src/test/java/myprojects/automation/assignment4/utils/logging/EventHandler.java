@@ -89,7 +89,10 @@ public class EventHandler implements WebDriverEventListener {
 
     @Override
     public void beforeChangeValueOf(WebElement element, WebDriver driver, CharSequence[] keysToSend) {
-        String value = Arrays.stream(keysToSend).map(CharSequence::toString).collect(Collectors.joining());
+        String value = "";
+        if (keysToSend != null) {
+            value = Arrays.stream(keysToSend).map(CharSequence::toString).collect(Collectors.joining());
+        }
         CustomReporter.log(String.format("Change value of %s: %s\n", element.getTagName(), value));
     }
 

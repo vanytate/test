@@ -8,6 +8,7 @@ import java.util.Random;
  * Hold Product information that is used among tests.
  */
 public class ProductData {
+
     private String name;
     private int qty;
     private float price;

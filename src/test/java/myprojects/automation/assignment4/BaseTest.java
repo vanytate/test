@@ -3,11 +3,11 @@ package myprojects.automation.assignment4;
 import myprojects.automation.assignment4.utils.logging.EventHandler;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.remote.BrowserType;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Parameters;
 
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
  * Base script functionality, can be used for all Selenium scripts.
  */
 public abstract class BaseTest {
+
     protected EventFiringWebDriver driver;
     protected GeneralActions actions;
 
@@ -26,26 +27,44 @@ public abstract class BaseTest {
      *
      * @return New instance of {@link WebDriver} object.
      */
+//    private WebDriver getDriver(String browser) {
     private WebDriver getDriver(String browser) {
+        String driverPath;
         switch (browser) {
-            case "firefox":
-                System.setProperty(
-                        "webdriver.gecko.driver",
-                        getResource("/geckodriver.exe"));
-                return new FirefoxDriver();
-            case "ie":
-            case "internet explorer":
-                System.setProperty(
-                        "webdriver.ie.driver",
-                        getResource("/IEDriverServer.exe"));
-                return new InternetExplorerDriver();
-            case "chrome":
+            case BrowserType.CHROME:
+                driverPath = getChromeDriverName();
+                break;
+            case BrowserType.FIREFOX:
+                driverPath = "/geckodriver.exe";
+                break;
+            case BrowserType.IE:
+                driverPath = "/IEDriverServer.exe";
+                break;
             default:
-                System.setProperty(
-                        "webdriver.chrome.driver",
-                        getResource("/chromedriver.exe"));
-                return new ChromeDriver();
+                driverPath = "/chromedriver.exe";
+                break;
         }
+        System.setProperty("webdriver.chrome.driver", getResource(driverPath));
+        return new ChromeDriver();
+//        switch (browser) {
+//            case "firefox":
+//                System.setProperty(
+//                        "webdriver.gecko.driver",
+//                        getResource("/geckodriver.exe"));
+//                return new FirefoxDriver();
+//            case "ie":
+//            case "internet explorer":
+//                System.setProperty(
+//                        "webdriver.ie.driver",
+//                        getResource("/IEDriverServer.exe"));
+//                return new InternetExplorerDriver();
+//            case "chrome":
+//            default:
+//                System.setProperty(
+//                        "webdriver.chrome.driver",
+//                        getResource("/chromedriver.exe"));
+//                return new ChromeDriver();
+//        }
     }
 
     /**
@@ -68,9 +87,9 @@ public abstract class BaseTest {
      * creates {@link ChromeDriver} instance by default.
      *
      */
+    @Parameters("selenium.browser")
     @BeforeClass
-    // TODO use parameters from pom.xml to pass required browser type
-    public void setUp(String browser ) {
+    public void setUp(String browser) {
         driver = new EventFiringWebDriver(getDriver(browser));
         driver.register(new EventHandler());
 
@@ -79,6 +98,23 @@ public abstract class BaseTest {
         driver.manage().window().maximize();
 
         actions = new GeneralActions(driver);
+    }
+
+    /**
+     * That is for other os type (mac and linux) for chrome driver
+     * @return path for chrome driver
+     */
+    private static String getChromeDriverName() {
+        String osName = System.getProperty("os.name").toLowerCase();
+        String result;
+        if (osName.contains("mac")) {
+            result = "/chromedriver-mac";
+        } else if (osName.contains("linux")) {
+            result = "/chromedriver-linux";
+        } else {
+            result = "/chromedriver.exe";
+        }
+        return result;
     }
 
     /**

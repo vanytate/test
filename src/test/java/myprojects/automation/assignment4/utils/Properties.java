@@ -4,6 +4,7 @@ package myprojects.automation.assignment4.utils;
  * Help class to get passed parameters from environment for further usage in the automation project
  */
 public class Properties {
+
     private static final String DEFAULT_BASE_URL = "http://prestashop-automation.qatestlab.com.ua/";
     private static final String DEFAULT_BASE_ADMIN_URL = "http://prestashop-automation.qatestlab.com.ua/admin147ajyvk0/";
 
@@ -22,7 +23,6 @@ public class Properties {
     public static String getBaseAdminUrl() {
         return System.getProperty(EnvironmentVariables.BASE_ADMIN_URL.toString(), DEFAULT_BASE_ADMIN_URL);
     }
-
 }
 
 /**

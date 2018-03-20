@@ -1,16 +1,16 @@
 package myprojects.automation.assignment4;
 
-
-import myprojects.automation.assignment4.Pages.LoginPage;
-import myprojects.automation.assignment4.Pages.ProductPage;
-import myprojects.automation.assignment4.model.ProductData;
+import myprojects.automation.assignment4.pages.AdminLoginPage;
+import myprojects.automation.assignment4.pages.MainAdminPage;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * Contains main script actions that may be used in scripts.
  */
 public class GeneralActions {
+
     private WebDriver driver;
     private WebDriverWait wait;
 
@@ -25,26 +25,15 @@ public class GeneralActions {
      * @param password
      */
     public void login(String login, String password) {
-        // TODO implement logging in to Admin Panel
-      //  throw new UnsupportedOperationException();
-            LoginPage loginPage = new LoginPage(driver);
-            loginPage.open();
-            loginPage.fillEmailInput(login);
-            loginPage.fillPasswordInput(password);
-            loginPage.clickLoginButton();
-        }
-
-
-
-    public void createProduct(ProductData newProduct) {
-        // TODO implement product creation scenario
-     //   throw new UnsupportedOperationException();
-        ProductPage productPage = new ProductPage(driver);
-        productPage.open();
-        productPage.allProdPageIsDisplayed();
-        productPage.newProdPageIsDisplayed();
-        productPage.newProdIsCreated();
+        AdminLoginPage adminLoginPage = new AdminLoginPage(driver);
+        adminLoginPage.open();
+        adminLoginPage.fillEmailInput(login);
+        adminLoginPage.fillPasswordInput(password);
+        adminLoginPage.clickLoginButton();
+        MainAdminPage mainAdminPage = new MainAdminPage(driver);
+        wait.until(ExpectedConditions.visibilityOf(driver.findElement(mainAdminPage.getImgLogo())));
     }
+
 
     /**
      * Waits until page loader disappears from the page
